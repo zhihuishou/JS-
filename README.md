@@ -53,7 +53,8 @@ JS逆向知识梳理
       // 'function eval() { [native code] }'
 
 ##### （3）断点调试，通过将debugger打上断点，将其设置为False.
-      ![image](https://github.com/zhihuishou/Javascript_Reverse/assets/161868456/b68cfa3b-6a52-4680-8368-fc9866abdbc1)
+
+[image](https://github.com/zhihuishou/Javascript_Reverse/assets/161868456/b68cfa3b-6a52-4680-8368-fc9866abdbc1)
       
 2.如何处理webpack打包?
 -------
