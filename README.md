@@ -92,7 +92,7 @@ JS逆向知识梳理
 解决方法：
       扣 + 堆栈看，涉及到webpack，只要扣就完了。实现的方式，找到加密位置进行堆栈查看，找到加载器以及缺失的模块，构造如上的自执行函数，缺什么补什么。
 
-3.JSPRC调用（RPC，英文 RangPaCong，中文让爬虫，旨在为爬虫开路，秒杀一切，让爬虫畅通无阻！ PS：玩笑话）
+3.如何实现JSPRC调用（RPC，英文 RangPaCong，中文让爬虫，旨在为爬虫开路，秒杀一切，让爬虫畅通无阻！ PS：玩笑话）?
 -------
 
 > RPC和抓包工具逻辑是有点类似的（个人理解），都是通过中转站的逻辑将数据包回传，（RPC是通过websocket协议进行）。抓包工具是建立了通信证书的逻辑，从而可以抓到网页数据。而RPC在浏览器中将加密函数暴露出来，在本地直接调用浏览器中对应的加密函数，从而得到加密结果，不必去在意函数具体的执行逻辑，也省去了扣代码、补环境等操作，可以省去大量的逆向调试时间。
@@ -106,11 +106,11 @@ JS逆向知识梳理
 也可以看这个K哥的文章：     [k哥爬虫](https://baijiahao.baidu.com/s?id=1725536000710059774&wfr=spider&for=pc)
 
 整体内容已经很丰富了，大概过一遍操作逻辑：
-> 1.进入调试，将大佬的代码注入snippet
+> (1)进入调试，将大佬的代码注入snippet
 
-> 2.连接通信，这里就是相当于hook已经构建了一个function你要做的就是怎么让这个RPC连接和你之后要找的加密参数连起来，通过 new Hlclient("ws://127.0.0.1:12080/ws?group=zzz&name=hlg"); 建立一个http协议；
+> (2)连接通信，这里就是相当于hook已经构建了一个function你要做的就是怎么让这个RPC连接和你之后要找的加密参数连起来，通过 new Hlclient("ws://127.0.0.1:12080/ws?group=zzz&name=hlg"); 建立一个http协议；
 
-> 3.在你需要获取加密数据的地方打上你的断点，进行代码的调用。构造逻辑作者已经写好了，这里需要注意的是，在你的断点打上后，将构造的函数写入console中。
+> (3)在你需要获取加密数据的地方打上你的断点，进行代码的调用。构造逻辑作者已经写好了，这里需要注意的是，在你的断点打上后，将构造的函数写入console中。
 
       demo.regAction("hello3", function (resolve,param) {
                 //hello3 是你构建的函数，也就是在之后请求中你需要写进去的。
@@ -121,5 +121,26 @@ JS逆向知识梳理
 
 ![image](https://github.com/zhihuishou/Javascript_Reverse/assets/161868456/d8485aed-9a26-45a2-a97e-eab189f66b5c)
 
-> 4.然后就是本地化调用，写最简单的request去请求就完了
+> (4)然后就是本地化调用，写最简单的request去请求就完了
+
+
+4.hook注入的多种方式，涉及到多种加密方式的直接实现。
+-------
+
+>hook注入是JS逆向中，比较流行的，你可以直接在代码调试F12里面的snippets添加代码进行注入，也可以通过油猴脚本的方式，这里分享一个大佬将所有的hook注入方式都写好了，这里我们只需要将其放到我们的snippet代码块上就OK。
+
+>大佬的GITHUB链接： [多种加密方式](https://github.com/Captain0X/hacker_tools/blob/main/crack_encrypt.js)
+
+这里我直接做个案例分析，对某数据网站的加密进行解密，我把大佬的一键注入hook代码放到snippets上，进行运行该脚本。
+
+![image](https://github.com/zhihuishou/Javascript_Reverse/assets/161868456/bcc51e60-993c-4f06-a41d-599dd0c25255)
+
+当我对其他链接进行切换的时候，该hook自动补获了数据，在console里出现了提示，这里分别给到了我们三个值：ENDATA | AES KEY | AES IV | AES加密结果，基本可以判断该加密方式为AES加密，之后的操作就简单了。
+
+![image](https://github.com/zhihuishou/Javascript_Reverse/assets/161868456/425ed3ad-66bc-4a9f-b78f-210f1d175a18)
+
+我们对该返回值的位置右侧function进行断点，不刷新，进行页面切换或者链接的切换，这里就可以断住。然后我们进行堆栈处理，之后就能找到该算法的对应加密信息，虽然他进行代码混淆，但是我们还是能看出来该逻辑就是AES算法的框架。
+
+![image](https://github.com/zhihuishou/Javascript_Reverse/assets/161868456/53d5e378-b846-4b5b-9440-4d58a56c13bd)
+
 
