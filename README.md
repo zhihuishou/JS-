@@ -143,4 +143,6 @@ JS逆向知识梳理
 
 ![image](https://github.com/zhihuishou/Javascript_Reverse/assets/161868456/53d5e378-b846-4b5b-9440-4d58a56c13bd)
 
+5.JS中常见的编码以及加密方式
+-------
 
